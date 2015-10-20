@@ -19,16 +19,16 @@ class IndexReader:
 
     def get_record(self, wrd):
         if wrd not in self.shlv_offsets.keys():
-            return list()
+            return iter(list())
         offset = self.shlv_offsets[wrd]
         self.ind.seek(offset)
         vb_len = struct.unpack("l", self.ind.read(struct.calcsize("l")))[0]
         vb_code = self.ind.read(vb_len)
-        return VarByte.decode(vb_code)
+        return iter(VarByte.decode(vb_code))
 
     def get_urls_by_ids(self, ids):
         result = list()
-        for id_ in list(ids):
+        for id_ in ids:
             result.append(self.shlv_urls[struct.pack("l", id_)])
         return iter(result)
 
@@ -45,17 +45,18 @@ class QueryHandler:
         for el in ("(", ")", "!", "&", "|"):
             query = query.replace(el, " %s " % el)
 
-        terms = filter(lambda a: a != "", query.split())
+        terms = ["("] + filter(lambda a: a != "", query.split()) + [")"]
         operations = "|&!"
         brackets = "()"
-        priority_dict = {"#": -1, "|": 0, "&": 1, "!": 2}
+        priority_dict = {"(": -1, "|": 0, "&": 1, "!": 2}
         operations_dict = {"|": QueryHandler._or, "&": QueryHandler._and, "!": QueryHandler._not}
-        operations_st = ["#"]
+        operations_st = list()
         iters_st = list()
         for t in terms:
             if t in operations:
                 while priority_dict[operations_st[-1]] > priority_dict[t]:
                     ps = operations_st[-1]
+                    operations_st.pop()
                     if ps != "!":
                         it1 = iters_st[-1]
                         it2 = iters_st[-2]
@@ -73,6 +74,7 @@ class QueryHandler:
                 else:
                     while operations_st[-1] != "(":
                         ps = operations_st[-1]
+                        operations_st.pop()
                         if ps != "!":
                             it1 = iters_st[-1]
                             it2 = iters_st[-2]
@@ -87,18 +89,19 @@ class QueryHandler:
             else:
                 iters_st.append(self.reader.get_record(t))
 
-            while len(iters_st) > 1:
-                ps = operations_st[-1]
-                if ps != "!":
-                    it1 = iters_st[-1]
-                    it2 = iters_st[-2]
-                    iters_st.pop()
-                    iters_st.pop()
-                    opr = operations_dict[ps]
-                    iters_st.append(iter(opr(it1, it2)))
-                else:
-                    opr = operations_dict[ps]
-                    iters_st[-1] = iter(opr(self.count_urls, iters_st[-1]))
+        while len(iters_st) > 1:
+            ps = operations_st[-1]
+            operations_st.pop()
+            if ps != "!":
+                it1 = iters_st[-1]
+                it2 = iters_st[-2]
+                iters_st.pop()
+                iters_st.pop()
+                opr = operations_dict[ps]
+                iters_st.append(iter(opr(it1, it2)))
+            else:
+                opr = operations_dict[ps]
+                iters_st[-1] = iter(opr(self.count_urls, iters_st[-1]))
         return iters_st[-1]
 
 
