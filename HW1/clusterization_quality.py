@@ -1,3 +1,4 @@
+#!/Users/feldsherov/anaconda/bin/python
 __author__ = 'feldsherov'
 
 import sys

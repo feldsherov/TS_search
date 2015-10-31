@@ -1,3 +1,4 @@
+#!/Users/feldsherov/anaconda/bin/python
 __author__ = 'feldsherov'
 
 import sys
@@ -7,7 +8,7 @@ import random
 import numpy as np
 from sklearn.cluster import KMeans as kmeans
 
-COUNT_OF_CLUSTERS = 4
+COUNT_OF_CLUSTERS = 3
 
 
 class Clusterizator_kmeans:
@@ -83,16 +84,16 @@ def normalize_url(url):
 
 def generate_regexps_by_url(url):
     segments = url.split(r"/")[1:]
-    count_of_segments = "^" + "(/[a-zA-Z0-9\._%-]+){" + str(len(segments)) + "}" + "/?$"
+    count_of_segments = "^" + "(/[^\/]+){" + str(len(segments)) + "}" + "/?$"
 
     segments_match = list()
     for i, s in enumerate(segments):
-        segments_match.append("^" + "(/[a-zA-Z0-9\._%-]+){" + str(i) + "}" + "/" + s +
-                              "(/[a-zA-Z0-9\._%-]+){" + str(len(segments) - 1 - i) + "}" + "/?$")
+        segments_match.append("^" + "(/[^\/]+){" + str(i) + "}" + "/" + s +
+                              "(/[^\/]+){" + str(len(segments) - 1 - i) + "}" + "/?$")
 
         if s.isdigit():
-            segments_match.append("^" + "(/[a-zA-Z0-9\._%-]+){" + str(i) + "}" + "/[0-9]+" +
-                                  "(/[a-zA-Z0-9\._%-]+){" + str((len(segments) - 1 - i)) + "}" + "/?$")
+            segments_match.append("^" + "(/[^\/]+){" + str(i) + "}" + "/[0-9]+" +
+                                  "(/[^\/]+){" + str((len(segments) - 1 - i)) + "}" + "/?$")
 
     check_extention = None
     ext = url.split(".")[-1]
@@ -119,7 +120,7 @@ def generate_regexps_all(urls):
     return regexps_all
 
 
-def select_regexps(urls, regexps, alfa=0.01):
+def select_regexps(urls, regexps, alfa=0.1):
     regexps_s = regexps
     regexps = [re.compile(s) for s in regexps_s]
 
@@ -164,7 +165,7 @@ def generate_regexp_for_clusters(regexps, features, clusters):
 
     for f_id in range(features.shape[1]):
         for c_id in range(COUNT_OF_CLUSTERS):
-            if cnt[c_id][f_id] > 0.95:
+            if cnt[c_id][f_id] > 0.7:
                 ans[c_id].append(regexps[f_id][1])
 
     return ans
@@ -174,7 +175,7 @@ if __name__ == "__main__":
     urls_general_path = sys.argv[1]
     urls_examined_path = sys.argv[2]
 
-    urls_examined = normilize_all(open(urls_examined_path, "r").readlines()[:500])
+    urls_examined = normilize_all(open(urls_examined_path, "r").readlines()[:1000])
     urls_general = normilize_all(random.sample(open(urls_general_path, "r").readlines(), len(urls_examined)))
 
     urls_all = urls_examined + urls_general
@@ -207,7 +208,7 @@ if __name__ == "__main__":
     print >>fout, "$XDIM 2"
     print >>fout, "$YDIM %d" % features.shape[0]
     print >>fout, "$VEC_DIM %d" % features.shape[1]
-    for url, reg in zip(urls_all, actual_regexps):
+    for url, reg in enumerate(actual_regexps):
         print >>fout, url, reg[1]
     fout.close()
 
