@@ -1,10 +1,16 @@
+#!/usr/bin/env python
 import zlib
 import base64
 
 from sys import stdin, stderr
 from itertools import groupby
 from operator import itemgetter
-from varbyte import VarByte
+
+from zipimport import zipimporter
+zp = zipimporter("third_party.zip")
+varbyte = zp.load_module("varbyte")
+VarByte = varbyte.VarByte
+
 
 __author__ = 'feldsherov'
 

@@ -1,5 +1,7 @@
+#!/usr/bin/env python
 import struct
 import sys
+
 
 class Simple9:
     def __init__(self):
