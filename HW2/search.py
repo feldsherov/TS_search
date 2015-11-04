@@ -30,7 +30,10 @@ class IndexReader:
     def get_urls_by_ids(self, ids):
         result = list()
         for id_ in ids:
-            result.append(self.shlv_urls[struct.pack("l", id_)])
+            try:
+                result.append(self.shlv_urls[struct.pack("l", id_)])
+            except KeyError:
+                print >>sys.stderr, id_
         return iter(result)
 
     def get_urls_cout(self):
@@ -67,7 +70,7 @@ class QueryHandler:
                         iters_st.append(iter(opr(it1, it2)))
                     else:
                         opr = operations_dict[ps]
-                        iters_st[-1] = iter(opr(self.count_urls, iters_st[-1]))
+                        iters_st[-1] = iter(opr(self.count_urls - 1, iters_st[-1]))
                 operations_st.append(t)
             elif t in brackets:
                 if t == "(":
@@ -85,7 +88,7 @@ class QueryHandler:
                             iters_st.append(iter(opr(it1, it2)))
                         else:
                             opr = operations_dict[ps]
-                            iters_st[-1] = iter(opr(self.count_urls, iters_st[-1]))
+                            iters_st[-1] = iter(opr(self.count_urls - 1, iters_st[-1]))
                     operations_st.pop()
             else:
                 iters_st.append(self.reader.get_record(t))
@@ -102,7 +105,7 @@ class QueryHandler:
                 iters_st.append(iter(opr(it1, it2)))
             else:
                 opr = operations_dict[ps]
-                iters_st[-1] = iter(opr(self.count_urls, iters_st[-1]))
+                iters_st[-1] = iter(opr(self.count_urls - 1, iters_st[-1]))
         return iters_st[-1]
 
 
