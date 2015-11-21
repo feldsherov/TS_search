@@ -25,7 +25,7 @@ class SnippetBuilder:
 
     @staticmethod
     def get_revelatory(sentence, q_words):
-        return 100 * sentence.get_words_intersection(q_words) + \
+        return 10 * sentence.get_words_intersection(q_words) + \
                 len(sentence.text) - sentence.position
 
     @staticmethod
