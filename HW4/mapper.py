@@ -66,6 +66,5 @@ def main():
         print("!!!DOC_LEN %s %s\t" % (int(doc_id), pos_tmp))
 
 
-
 if __name__ == "__main__":
     main()

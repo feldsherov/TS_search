@@ -18,7 +18,18 @@ __author__ = 'feldsherov'
 
 def read_mapper_output(file_):
     for line in file_:
-        yield line.rstrip().split()
+        tp = line.rstrip().split()
+        if len(tp) == 3:
+            yield tp
+        else:
+            print(tp, file=stderr)
+
+
+def get_1_2(a):
+    if len(a) != 3:
+        print(a, file=stderr)
+        raise Exception("wrong length %s" % a)
+    return a[1], a[2]
 
 
 def main():
@@ -27,7 +38,7 @@ def main():
         if current_word != "!!!DOC_LEN":
             print(current_word, end="\t")
 
-        groups_by_word = imap(lambda a: (a[1], a[2]), docs_pos)
+        groups_by_word = imap(get_1_2, docs_pos)
         if current_word == "!!!DOC_LEN":
             for doc_id, doc_len in groups_by_word:
                 print("!!!DOC_LEN", doc_id, doc_len)
