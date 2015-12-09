@@ -11,6 +11,8 @@ def norm_url(url):
         url = "".join(sp[:-1])
     if url.endswith("/"):
         url = url[:-1]
+    if ".ru" in url:
+        url = url.split(".ru")[-1]
     return url
 
 
@@ -34,13 +36,14 @@ def main():
     bm_pos = list()
     ps_pos = list()
 
-    for row in markes_f:
-        print row
+    for step, row in enumerate(markes_f):
+        print 'step: %d ' % step, row
         query, ans = map(lambda a: a.decode("utf-8"), row.strip().split("\t"))
         sp = filter(lambda a: a != "", query.split())
-        query = "|".join(sp)
+        query = "&".join(sp)
         query_results, words_seq = handler.get_records(query)
 
+        query_results = list(query_results)
         bool_res = map(norm_url, reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results)))
         ans = norm_url(ans)
         if ans not in bool_res:
@@ -48,9 +51,8 @@ def main():
         else:
             query_results_bm25 = search.rank_results(query_results, reader.get_urls_cout(),
                                                      words_seq=words_seq, order_by="bm25")
-
             query_results_ps = search.rank_results(query_results, reader.get_urls_cout(),
-                                                   words_seq=words_seq, order_by="ps")
+                                                   words_seq=words_seq, order_by="ps", top=200)
 
             bm25_res = map(norm_url, reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results_bm25)))
             ps_res = map(norm_url, reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results_ps)))
@@ -62,20 +64,13 @@ def main():
 
             bm_pos.append(bm25_res.index(ans))
             bool_pos.append(bool_res.index(ans))
-        print """
-                ----------------------------------
-                mismatch %d
-                bool_pos_mean %f
-                bm_pos_mean %f
-                ps_mismatch %d
-                ps_pos_mean %f
-                ----------------------------------
-              """ % (mismatch,
-                     float(sum(bool_pos)) / max(len(bool_pos), 1),
-                     float(sum(bm_pos)) / max(len(bm_pos), 1),
-                     ps_mismatch,
-                     float(sum(ps_pos)) / max(len(ps_pos), 1))
-
+        print "-----------------------------\n",\
+              "mismatch %d \n" % mismatch, \
+              "bool_pos_mean %f \n" % (float(sum(bool_pos)) / max(len(bool_pos), 1)), \
+              "bm_pos_mean %f \n" % (float(sum(bm_pos)) / max(len(bm_pos), 1)), \
+              "ps_mismatch %d \n" % ps_mismatch, \
+              "ps_pos_mean %f \n" % (float(sum(ps_pos)) / max(len(ps_pos), 1)), \
+              "-----------------------------\n"
 
 
 if __name__ == "__main__":

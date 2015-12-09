@@ -10,7 +10,6 @@ __author__ = 'feldsherov'
 class HTMLTextExtractor:
     def __init__(self, skip_tags=('script', 'style', 'noindex')):
         self.skip_tags = skip_tags
-        pass
 
     def extract(self, markup):
         soup = BeautifulSoup(markup, 'lxml')

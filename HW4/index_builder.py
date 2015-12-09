@@ -39,6 +39,7 @@ def main():
     shlv_urls = shelve.open(index_path + "_urls")
     shlv_len = shelve.open(index_path + "_len")
     for file_path in os.listdir(src_dir):
+        print "Process file: %s" % file_path
         file_path = os.path.abspath(src_dir + file_path)
         if os.path.isfile(file_path):
             add_to_index(ind, shlv, shlv_len, open(file_path, "r"))

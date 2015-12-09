@@ -4,10 +4,10 @@ from __future__ import print_function
 
 import base64
 import zlib
-import itertools
 import re
 import string
 from sys import stdin, stderr
+from itertools import imap, ifilter
 import HTMLParser
 
 import pymorphy2
@@ -44,7 +44,7 @@ class WordsNormalizer:
         return self.morph.parse(word)[0].normal_form
 
     def __iter__(self):
-        return itertools.imap(self.normalize_word, self.words)
+        return ifilter(None, imap(self.normalize_word, self.words))
 
 
 def main():
@@ -60,10 +60,10 @@ def main():
 
         pos_tmp = 0
         for pos, wrd in enumerate(normalizer):
-            print("%s %06d %06d\t" % (wrd.encode("unicode-escape"), int(doc_id), pos))
+            print("%s %07d %07d\t" % (wrd.encode("utf-8"), int(doc_id), pos))
             pos_tmp = pos
 
-        print("!!!DOC_LEN %s %s\t" % (int(doc_id), pos_tmp))
+            print("!!!DOC_LEN %s %s\t" % (int(doc_id), pos_tmp))
 
 
 if __name__ == "__main__":

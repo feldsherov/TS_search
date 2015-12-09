@@ -7,6 +7,7 @@ import itertools
 import pymorphy2
 import optparse
 import math
+import os
 
 import varbyte
 
@@ -205,7 +206,8 @@ class QueryHandler:
             right_res = self.execute_query(qtree.right)
 
         if qtree.word is not None:
-            return iter(self.reader.get_record(qtree.word.encode("unicode-escape")))
+            result_list = self.reader.get_record(qtree.word.encode("unicode-escape"))
+            return iter(result_list)
         else:
             opr = operations_dict[qtree.operation]
             return iter(opr(left_res, right_res))
@@ -273,11 +275,12 @@ class QueryHandler:
             pass
 
 
-def calc_bm25(q_result, cnt):
+def calc_bm25(q_result, cnt_docs):
     k1, b = 2, 0.75
+    eps = 1e-3
     ans = 0
     for record in q_result.records:
-        idf = math.log10(float(record.df) / cnt)
+        idf = math.log10(cnt_docs / float(record.df))
         ans += record.tf * idf / (record.tf + k1 * (b + record.doc_len * (1 - b)))
     return ans
 
@@ -293,6 +296,9 @@ def count_inversion(sequence):
 
 
 def calc_one_passage_rank(passage):
+    if not filter(None, passage):
+        return -1
+
     min_el = min(filter(None, passage))
     max_el = max(filter(None, passage))
     max_count = max(len(passage) * (len(passage) - 1), 1)
@@ -331,7 +337,7 @@ def calc_passage_rank(q_result, words_seq):
     return ans
 
 
-def rank_results(query_results, cnt_docs, words_seq, order_by="bm25"):
+def rank_results(query_results, cnt_docs, words_seq, order_by="bm25", top=100):
     query_results = list(query_results)
     bm25_order = None
 
@@ -342,7 +348,7 @@ def rank_results(query_results, cnt_docs, words_seq, order_by="bm25"):
     if order_by == "bm25":
         return bm25_order
     elif order_by == "ps":
-        passage_order = bm25_order[:50]
+        passage_order = bm25_order[:top]
         passage_order.sort(key=lambda a: -calc_passage_rank(a, words_seq))
         return passage_order
 
@@ -370,19 +376,20 @@ def main():
     if options.mode not in ("b", "bm25", "ps"):
         optparser.error("Mode option must be ps, bm25 or b")
 
-    query = raw_input().decode("utf-8")
+    for row in sys.stdin:
+        query = row.decode("utf-8")
 
-    if not options.operations:
-        sp = filter(lambda a: a != "", query.split())
-        query = "|".join(sp)
+        if not options.operations:
+            sp = filter(lambda a: a != "", query.split())
+            query = "|".join(sp)
 
-    query_results, words_seq = handler.get_records(query)
-
-    if options.mode == "b":
-        print "\n".join(reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results)))
-    else:
-        query_results = rank_results(query_results, reader.get_urls_cout(), words_seq=words_seq, order_by=options.mode)
-        print "\n".join(reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results)))
+        query_results, words_seq = handler.get_records(query)
+        query_results = list(query_results)
+        if options.mode == "b":
+            print "\n".join(reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results)))
+        else:
+            query_results = rank_results(query_results, reader.get_urls_cout(), words_seq=words_seq, order_by=options.mode)
+            print "\n".join(reader.get_urls_by_ids(map(lambda a: a.doc_id, query_results)))
 
 
 if __name__ == "__main__":
