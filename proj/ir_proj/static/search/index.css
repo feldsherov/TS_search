@@ -1,0 +1,21 @@
+body {
+    background-color: #ffecb3;
+}
+
+
+textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
+    border-color: rgba(229, 103, 23, 0.8);
+    box-shadow: 0 2px 2px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(229, 103, 23, 0.6);
+    outline: 0 none;
+}
+
+html, body, .container-table {
+    height: 100%;
+}
+.container-table {
+    display: table;
+}
+.vertical-center-row {
+    display: table-cell;
+    vertical-align: middle;
+}

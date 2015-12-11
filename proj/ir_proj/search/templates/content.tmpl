@@ -1,0 +1,10 @@
+{% extends "templates/search.html" %}
+
+{% block content %}
+    <p>Всего результатов: {{ln}} </p>
+{% for result in query_result %}
+    <div class="result">
+        {{ forloop.counter0 }}. <a href={{result}}>{{result}}</a>
+    </div>
+{% endfor %}
+{% endblock %}
