@@ -6,7 +6,7 @@ from singleton import singleton
 __author__ = 'feldsherov'
 
 
-@singleton
+
 class DirectIndex:
     class DirectIndexRecord:
         def __init__(self, row):
