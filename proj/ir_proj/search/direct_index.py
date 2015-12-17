@@ -6,11 +6,10 @@ from singleton import singleton
 __author__ = 'feldsherov'
 
 
-
 class DirectIndex:
     class DirectIndexRecord:
         def __init__(self, row):
-            url_id, b64_defl_sentences, img, summary, title = row.rstrip().split("\t")
+            url_id, b64_defl_sentences, img, summary, title = row.decode("utf-8").rstrip().split("\t")
             self.url_id = int(url_id)
             defl_sentences = base64.b64decode(b64_defl_sentences)
             self.sentences = zlib.decompress(defl_sentences).split("\n")
