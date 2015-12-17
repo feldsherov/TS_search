@@ -1,5 +1,35 @@
-body {
-    margin-top: 1cm;
+.search-input-area {
+    margin-top: 15px;
+    min-width: 30px;
+    float: right;
+}
+
+.search-logo {
+    height: 100%;
+}
+
+.search-logo-container {
+    float: left;
+    height: 100%;
+}
+
+.search-container-result {
+    width: 100%;
+    margin-left: 15px;
+    height: 50px;
+}
+
+.search-input-area-result {
+    margin-left: 49px;
+    width: calc(100% - 49px);
+    height: 50px;
+    border: 2px solid rgb(217, 217, 217);
+    background-color: white;
+}
+
+.container {
+    width: 60%;
+    margin-left: 15px;
 }
 
 .content {
@@ -8,4 +38,41 @@ body {
 
 .result {
     margin-top: 1cm;
+}
+
+#loop {
+    float: right;
+    float: left-clear;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 40px;
+}
+
+.result-container {
+    margin-left: 80px;
+}
+
+#search-input {
+    float: left;
+    height: 100%;
+    width: calc(100% - 49px);
+    font-size: 30px;
+    outline: none;
+    box-sizing: border-box;
+    border: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+a.result-link {
+    text-decoration: none;
+    color: green;
+    font-size: 14px
+}
+
+a.result-title {
+    font-size: 20px
 }

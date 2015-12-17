@@ -2,13 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title>Gusteau</title>
 
-    {% load staticfiles %}
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="/static/search/index.css">
   </head>
@@ -18,9 +14,8 @@
 
     <div class="search-container">
         <img class="logo" src="/static/search/gusteau-2-1.png">
-
         <div class="search-input-area">
-            <input type="text" id="search-input">
+            <input type="text" id="search-input" autocomplete="off" spellcheck="false">
             <img id="loop" src="/static/search/loop-gray.png">
         </div>
     </div>
@@ -29,7 +24,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/jquery-2.1.4.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="/static/js/jquery-2.1.4.min.js"></script>
+    <script src="/static/js/index.js"></script>
+    <script>$(initSearchRow);</script>
+
   </body>
 </html>

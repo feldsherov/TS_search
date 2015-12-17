@@ -136,9 +136,9 @@ class Searcher:
             
         final_result = []
         for score, url_id in sorted(zip(scores, result), reverse=True):
-            final_result.append((self.urls[url_id], score))
+            final_result.append((url_id, self.urls[url_id], score))
         if return_urls_only:
-            final_result = [x[0] for x in final_result]
+            final_result = [x[:-1] for x in final_result]
         return final_result
         
     def __del__(self):
