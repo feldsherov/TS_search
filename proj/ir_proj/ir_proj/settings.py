@@ -16,6 +16,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIRECT_INDEX_PATH = os.path.join(BASE_DIR, "search", "index_files", "sentences.txt")
 INVERSE_INDEX_DIR = os.path.join(BASE_DIR, "search", "index_files")
+SPELL_WORDS_NUM = os.path.join(BASE_DIR, "search", "index_files", "words.num")
+CPP_SEARCHER_PORT = 4224
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
