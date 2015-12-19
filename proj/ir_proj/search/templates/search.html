@@ -30,18 +30,21 @@
     {% verbatim %}
     <script id="result-tmpl" type="text/x-jquery-tmpl">
         <div class="result">
-            {{if img}}
-                <img src="${img}"></img>
-            {{/if}}
             {{if title}}
                 <a class="result-title" href="${url}">${title}</a> <br/>
-                <a class="result-link" href="${url}">${url}</a>
+                <a class="result-link" href="${url}">${url}</a><br/>
             {{else}}
-                <a class="result-title" href="${url}">${title}</a>
+                <a class="result-title" href="${url}">${title}</a><br/>
             {{/if}}
-            <br/>
+            {{if image}}
+                <img class="result-image" src="${image}"></img>
+            {{/if}}
             ${snippet}
         </div>
+    </script>
+
+    <script id="spell-tmpl" type="text/x-jquery-tmpl">
+         <p id="spell-p">Может быть вы искали: &#34;<a id="spell-link" href="/search?query=${spell}">${spell}</a>&#34; </p>
     </script>
     {% endverbatim %}
     <!-- Placed at the end of the document so the pages load faster -->
