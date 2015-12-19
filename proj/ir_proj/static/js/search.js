@@ -6,12 +6,23 @@ function updateSearchResults() {
     $.get("/searchJSON?query=" + $("#search-input").val(),
             function (data, status) {
                 $('#content').empty();
-                $.each(data.result, function (id) {
-                                        res = data.result[id]
-                                        $("#result-tmpl").tmpl(res).appendTo('#content');
-                                    });
-                $('#content').on('click', '.result', function() {
-                });
+                $('#spell-area').empty();
+                if (data.spell && data.spell !== $("#search-input").val()) {
+                    $("#spell-tmpl").tmpl(data).appendTo("#content");
+                    $('#spell-area').on('click', function() {
+                    });
+                }
+                if (data.error) {
+                    $('#content').append("Упс ничего не нашлось :(");
+                }
+                else {
+                    $.each(data.result, function (id) {
+                                            res = data.result[id]
+                                            $("#result-tmpl").tmpl(res).appendTo('#content');
+                                        });
+                    $('#content').on('click', '.result', function() {
+                    });
+                }
             });
 }
 
